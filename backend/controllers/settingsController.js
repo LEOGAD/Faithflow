@@ -143,7 +143,7 @@ exports.getSettings = async (req, res) => {
     ]);
     
     res.json({
-      settings: settingsDoc.exists ? settingsDoc.data() : DEFAULT_SETTINGS,
+      settings: settingsDoc.exists ? { ...DEFAULT_SETTINGS, ...settingsDoc.data() } : DEFAULT_SETTINGS,
       services: servicesSnap.docs.map(d => ({ id: d.id, ...d.data() })),
       income_categories: icSnap.docs.map(d => ({ id: d.id, ...d.data() })),
       expense_categories: ecSnap.docs.map(d => ({ id: d.id, ...d.data() }))
