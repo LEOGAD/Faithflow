@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Income Management | FaithFlow Admin</title>
+    <link href="styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-brand">FaithFlow</h1>
+                <p class="sidebar-subtitle">Stewardship Portal</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="income.html" class="nav-item active">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+                    Income
+                </a>
+                <a href="expenses.html" class="nav-item">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    Expenses
+                </a>
+                <a href="attendance.html" class="nav-item">
+                    <span class="material-symbols-outlined">groups</span>
+                    Attendance
+                </a>
+                <a href="records.html" class="nav-item">
+                    <span class="material-symbols-outlined">folder_shared</span>
+                    Records
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reports
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+                <a href="#" onclick="logout(); return false;" class="nav-item" style="color: var(--danger); margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                    <span class="material-symbols-outlined">logout</span>
+                    Logout
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpGFh9E8kjZE9RAXbWrQOOxOdqgrOMRCLktARVXBnT9Ya_shGmirJxW7jGiuOd8y1TLbp2q3o6-b9tf_y8l8VMfBhjwAuU5jZIHhb8FRh7JPoqH8n4uF7P8SNqOPsK5WatItFklazf_LQqv3cgEjd6YjGFYijbO0-_IjddlgyBOOrS01WH6LDUrayd_kKK_E-yq9p3TTQXrjlP_FrpdnY1_yGo5pbR6bEhHAOcyH9uVUG8UbCNNGMKeoj2orSR1BYkriedWGCq1dKU" alt="Admin User" class="user-avatar" />
+                <div class="user-info">
+                    <span class="user-name">Pastor John</span>
+                    <span class="user-role">Lead Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="btn-icon menu-toggle" id="menuToggle">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="header-title">Grace Community Church</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">add</span>
+                        Add Income
+                    </button>
+                    <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 8px;"></div>
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-container">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Income Management</h1>
+                        <p class="page-description">Track tithes, donations, and auxiliary funding streams.</p>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-4" style="margin-bottom: var(--spacing-xl);">
+                    <div class="card stagger-1">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <span class="material-symbols-outlined">account_balance_wallet</span>
+                            </div>
+                            <span class="stat-badge positive">0%</span>
+                        </div>
+                        <p class="stat-title">Total Collections</p>
+                        <p class="stat-value" id="kpiTotalIncome">$0.00</p>
+                    </div>
+
+                    <div class="card stagger-2">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <span class="material-symbols-outlined">volunteer_activism</span>
+                            </div>
+                            <span class="stat-badge neutral">Stable</span>
+                        </div>
+                        <p class="stat-title">Average Donation</p>
+                        <p class="stat-value" id="kpiAvgIncome">$0.00</p>
+                    </div>
+
+                    <div class="card stagger-3">
+                        <div class="stat-header">
+                            <div class="stat-icon warning">
+                                <span class="material-symbols-outlined">pending_actions</span>
+                            </div>
+                        </div>
+                        <p class="stat-title">Pending Clearance</p>
+                        <p class="stat-value">$0.00</p>
+                    </div>
+
+                    <div class="card stagger-4">
+                        <div class="stat-header">
+                            <div class="stat-icon success">
+                                <span class="material-symbols-outlined">fact_check</span>
+                            </div>
+                        </div>
+                        <p class="stat-title">Reports Status</p>
+                        <p class="stat-value">Verified</p>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <div class="form-group">
+                        <label class="form-label">Date Range</label>
+                        <input type="text" class="form-control" placeholder="Oct 01 - Oct 31, 2023" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service</label>
+                        <select class="form-control">
+                            <option>All Services</option>
+                            <option>Sunday Morning (8 AM)</option>
+                            <option>Sunday Morning (11 AM)</option>
+                            <option>Wednesday Midweek</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select class="form-control">
+                            <option>All Categories</option>
+                            <option>Tithe</option>
+                            <option>Building Fund</option>
+                            <option>Missions</option>
+                            <option>General Offering</option>
+                        </select>
+                    </div>
+                    <button class="btn-secondary" style="height: 44px;">
+                        <span class="material-symbols-outlined">filter_list</span>
+                        More Filters
+                    </button>
+                </div>
+
+                <!-- Table -->
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Donor</th>
+                                    <th>Category</th>
+                                    <th>Service</th>
+                                    <th style="text-align: right;">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="incomeTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-tertiary); padding: 2rem;">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <button class="fab">
+        <span class="material-symbols-outlined" style="font-size: 28px;">file_download</span>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="addIncomeModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Record Income</h2>
+                <button class="modal-close" id="closeAddIncomeBtn">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="addIncomeForm">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Date</label>
+                    <input type="date" id="incDate" class="form-control" required />
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Donor Name (Optional)</label>
+                    <input type="text" id="incName" class="form-control" placeholder="Anonymous" />
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Category</label>
+                    <select id="incCategory" class="form-control" required>
+                        <option value="Tithe">Tithe</option>
+                        <option value="Offering">Offering</option>
+                        <option value="Building Fund">Building Fund</option>
+                        <option value="Missions">Missions</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Amount</label>
+                    <input type="number" id="incAmount" class="form-control" step="0.01" min="0" required placeholder="0.00" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="income.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (menuToggle && sidebar && overlay) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
