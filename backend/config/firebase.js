@@ -25,13 +25,22 @@ const initLocalDb = () => {
 };
 
 try {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH && fs.existsSync(process.env.FIREBASE_SERVICE_ACCOUNT_PATH)) {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    // Handle JSON string directly (e.g. from Vercel Env Vars)
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount)
+    });
+    db = admin.firestore();
+    console.log('Firebase initialized with SERVICE_ACCOUNT_JSON.');
+  } else if (process.env.FIREBASE_SERVICE_ACCOUNT_PATH && fs.existsSync(process.env.FIREBASE_SERVICE_ACCOUNT_PATH)) {
+    // Handle local file path
     const serviceAccount = require(path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT_PATH));
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount)
     });
     db = admin.firestore();
-    console.log('Firebase initialized with service account.');
+    console.log('Firebase initialized with service account path.');
   } else {
     // If no service account, check if we are in a cloud environment
     if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
