@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Records | FaithFlow Admin</title>
+    <link href="styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-brand">FaithFlow</h1>
+                <p class="sidebar-subtitle">Stewardship Portal</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="income.html" class="nav-item">
+                    <span class="material-symbols-outlined">payments</span>
+                    Income
+                </a>
+                <a href="expenses.html" class="nav-item">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    Expenses
+                </a>
+                <a href="attendance.html" class="nav-item">
+                    <span class="material-symbols-outlined">groups</span>
+                    Attendance
+                </a>
+                <a href="records.html" class="nav-item active">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">folder_shared</span>
+                    Records
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reports
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+                <a href="#" onclick="logout(); return false;" class="nav-item" style="color: var(--danger); margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                    <span class="material-symbols-outlined">logout</span>
+                    Logout
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpGFh9E8kjZE9RAXbWrQOOxOdqgrOMRCLktARVXBnT9Ya_shGmirJxW7jGiuOd8y1TLbp2q3o6-b9tf_y8l8VMfBhjwAuU5jZIHhb8FRh7JPoqH8n4uF7P8SNqOPsK5WatItFklazf_LQqv3cgEjd6YjGFYijbO0-_IjddlgyBOOrS01WH6LDUrayd_kKK_E-yq9p3TTQXrjlP_FrpdnY1_yGo5pbR6bEhHAOcyH9uVUG8UbCNNGMKeoj2orSR1BYkriedWGCq1dKU" alt="Admin User" class="user-avatar" />
+                <div class="user-info">
+                    <span class="user-name">Pastor John</span>
+                    <span class="user-role">Lead Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="btn-icon menu-toggle" id="menuToggle">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="header-title">Grace Community Church</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-primary">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">person_add</span>
+                        Add Member
+                    </button>
+                    <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 8px;"></div>
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">search</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-container">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Member Directory</h1>
+                        <p class="page-description">Manage congregation members, families, and contact information.</p>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th style="text-align: right;">Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordsTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-tertiary); padding: 2rem;">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="addMemberModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Member</h2>
+                <button class="modal-close" id="closeAddMemberBtn">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <form id="addMemberForm">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="memName" class="form-control" required placeholder="John Doe" />
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Status</label>
+                    <select id="memStatus" class="form-control" required>
+                        <option value="Active">Active</option>
+                        <option value="Visitor">Visitor</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="memEmail" class="form-control" required placeholder="john@example.com" />
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="memPhone" class="form-control" placeholder="(555) 123-4567" />
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label class="form-label">Join Date</label>
+                    <input type="date" id="memJoinDate" class="form-control" required />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary modal-cancel-btn">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="records.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (menuToggle && sidebar && overlay) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
