@@ -32,16 +32,22 @@ const settingsRoutes = require('./routes/settingsRoutes');
 
 const authMiddleware = require('./middleware/authMiddleware');
 
+// API Router
+const apiRouter = express.Router();
+
 // Mount Routes (Protected)
-app.use('/income', authMiddleware, incomeRoutes);
-app.use('/expenses', authMiddleware, expenseRoutes);
-app.use('/attendance', authMiddleware, attendanceRoutes);
-app.use('/reports', authMiddleware, reportRoutes);
-app.use('/members', authMiddleware, memberRoutes);
-app.use('/settings', authMiddleware, settingsRoutes);
+apiRouter.use('/income', authMiddleware, incomeRoutes);
+apiRouter.use('/expenses', authMiddleware, expenseRoutes);
+apiRouter.use('/attendance', authMiddleware, attendanceRoutes);
+apiRouter.use('/reports', authMiddleware, reportRoutes);
+apiRouter.use('/members', authMiddleware, memberRoutes);
+apiRouter.use('/settings', authMiddleware, settingsRoutes);
 
 // Unprotected Auth Route
-app.use('/auth', authRoutes);
+apiRouter.use('/auth', authRoutes);
+
+// Main Entry
+app.use('/api', apiRouter);
 
 // Serve Frontend (Static files from parent directory)
 // On Vercel, static files are served automatically from the root
