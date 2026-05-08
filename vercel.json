@@ -1,14 +1,5 @@
 {
   "rewrites": [
-    { "source": "/auth/(.*)", "destination": "/api/index.js" },
-    { "source": "/settings(.*)", "destination": "/api/index.js" },
-    { "source": "/income(.*)", "destination": "/api/index.js" },
-    { "source": "/expenses(.*)", "destination": "/api/index.js" },
-    { "source": "/attendance(.*)", "destination": "/api/index.js" },
-    { "source": "/reports(.*)", "destination": "/api/index.js" },
-    { "source": "/members(.*)", "destination": "/api/index.js" },
-    { "source": "/public/(.*)", "destination": "/api/index.js" },
-    { "source": "/backup(.*)", "destination": "/api/index.js" },
-    { "source": "/export(.*)", "destination": "/api/index.js" }
+    { "source": "/api/(.*)", "destination": "/api/index.js" }
   ]
 }
