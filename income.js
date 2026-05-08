@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const kpiTotal = document.getElementById('kpiTotalIncome');
     const kpiAvg = document.getElementById('kpiAvgIncome');
     
+    // Sync with settings
+    window.addEventListener('settingsUpdated', () => {
+        console.log('Income Module: Syncing with new settings...');
+        populateDropdowns();
+    });
+    
     // Dropdowns
     const incCategorySelect = document.getElementById('incCategory');
     const filterCategorySelect = document.querySelectorAll('.filter-bar select')[1];
