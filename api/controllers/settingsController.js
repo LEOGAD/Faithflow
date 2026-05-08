@@ -395,36 +395,29 @@ exports.uploadLogo = async (req, res) => {
     if (!imageBase64) return res.status(400).json({ error: 'No image provided' });
     
     const churchId = getChurchId(req);
-    const fs = require('fs');
-    const path = require('path');
     
-    // Create public/logos directory if it doesn't exist
-    const logosDir = path.join(__dirname, '../public/logos');
-    if (!fs.existsSync(logosDir)) fs.mkdirSync(logosDir, { recursive: true });
+    // For small logos, we can store the base64 string directly in the settings doc.
+    // This is the most reliable way on Render as it doesn't require a persistent filesystem.
     
-    // Strip the base64 header (e.g. data:image/png;base64,)
-    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
-    const filename = `${churchId}_logo_${Date.now()}.png`;
-    const filePath = path.join(logosDir, filename);
-    
-    fs.writeFileSync(filePath, base64Data, 'base64');
-    
-    const logoUrl = `/public/logos/${filename}`;
-    
-    // Update settings
     const settingsRef = db.collection(`churches/${churchId}/settings`).doc('config');
     const doc = await settingsRef.get();
+    
     if (doc.exists) {
       const current = doc.data();
       current.church_profile = current.church_profile || {};
-      current.church_profile.logoUrl = logoUrl;
+      current.church_profile.logoUrl = imageBase64; // Store base64 directly
       await settingsRef.update(current);
+    } else {
+      // Create settings if they don't exist
+      await settingsRef.set({
+        church_profile: { logoUrl: imageBase64 }
+      });
     }
     
-    res.json({ message: 'Logo uploaded successfully', logoUrl });
+    res.json({ message: 'Logo updated successfully', logoUrl: imageBase64 });
   } catch (e) {
-    console.error('Logo upload error:', e);
-    res.status(500).json({ error: 'Failed to upload logo' });
+    console.error('Logo database update error:', e);
+    res.status(500).json({ error: 'Failed to save logo to database' });
   }
 };
 
