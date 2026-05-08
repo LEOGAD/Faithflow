@@ -6,8 +6,8 @@ window.logout = function() {
 }
 
 const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:5000'
-    : ''; // In production (Vercel), use relative path
+    ? 'http://localhost:5000/api'
+    : '/api'; // In production (Vercel), use official /api directory path
 
 document.addEventListener('DOMContentLoaded', () => {
     
