@@ -1,10 +1,15 @@
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000'
+    : '';
+
 document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.settings-tab-btn');
     const container = document.getElementById('tabPanelsContainer');
     let currentTab = 'church-profile';
     
     // Listen for settings load
-    window.addEventListener('settingsUpdated', () => {
+    window.addEventListener('settingsUpdated', (e) => {
+        window.appSettings = e.detail;
         renderActiveTab();
     });
     
@@ -877,19 +882,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="stat-card" style="text-align:center;">
                         <span class="material-symbols-outlined" style="font-size:3rem;color:var(--danger);margin-bottom:1rem;">receipt_long</span>
                         <h4>Expense Data</h4>
-                        <button class="btn-secondary" style="width:100%;margin-top:1rem;" onclick="window.open('http://localhost:5000/export/expenses', '_blank')">Export CSV</button>
+                        <button class="btn-secondary" style="width:100%;margin-top:1rem;" onclick="window.open(`${API_BASE}/export/expenses`, '_blank')">Export CSV</button>
                     </div>
                     <div class="stat-card" style="text-align:center;">
                         <span class="material-symbols-outlined" style="font-size:3rem;color:var(--success);margin-bottom:1rem;">groups</span>
                         <h4>Attendance Data</h4>
-                        <button class="btn-secondary" style="width:100%;margin-top:1rem;" onclick="window.open('http://localhost:5000/export/attendance', '_blank')">Export CSV</button>
+                        <button class="btn-secondary" style="width:100%;margin-top:1rem;" onclick="window.open(`${API_BASE}/export/attendance`, '_blank')">Export CSV</button>
                     </div>
                 </div>
 
                 <div style="border-top:1px solid var(--border-color); padding-top:2rem;">
                     <h4>System Backup</h4>
                     <p style="color:var(--text-secondary);margin-bottom:1rem;">Download a full JSON backup of all your settings, members, and transactions.</p>
-                    <button class="btn-primary" onclick="window.open('http://localhost:5000/backup/download', '_blank')"><span class="material-symbols-outlined">download</span> Download Full Backup</button>
+                    <button class="btn-primary" onclick="window.open(`${API_BASE}/backup/download`, '_blank')"><span class="material-symbols-outlined">download</span> Download Full Backup</button>
                     
                     <h4 style="margin-top:2rem;">Restore Backup</h4>
                     <input type="file" id="backupFile" accept=".json" class="form-control" style="margin-bottom:1rem; max-width:400px;">
