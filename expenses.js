@@ -109,28 +109,23 @@ document.addEventListener('DOMContentLoaded', () => {
         
         expensesData.forEach(record => {
             const tr = document.createElement('tr');
-            
-            // Badge color based on dynamic category
-            let catBadge = 'badge-primary';
-            const catDef = window.appSettings?.expense_categories?.find(c => c.name === record.category);
-            let badgeStyle = catDef ? `background:${catDef.color}; color:#fff;` : '';
-            
-            // Note: Since we didn't add status to backend schema directly in instructions but allowed open fields, it's there
-            let statusBadge = record.status === 'Paid' ? 'badge-success' : 'badge-warning';
-            
             tr.innerHTML = `
-                <td>${formatDate(record.date)}</td>
-                <td><strong>${record.description}</strong></td>
-                <td><span class="badge ${!catDef ? catBadge : ''}" style="${badgeStyle}">${record.category}</span></td>
-                <td><span class="badge ${statusBadge}">${record.status || 'Paid'}</span></td>
-                <td style="text-align: right;">
-                    <strong>${formatCurrency(record.amount)}</strong>
-                    <span class="material-symbols-outlined" onclick="editExpense('${record.id}', '${record.amount}')" style="font-size: 16px; cursor: pointer; color: var(--primary); margin-left: 10px; vertical-align: middle;">edit</span>
-                    <span class="material-symbols-outlined" onclick="deleteExpense('${record.id}')" style="font-size: 16px; cursor: pointer; color: var(--danger); margin-left: 5px; vertical-align: middle;">delete</span>
+                <td>${formatDate(row.date)}</td>
+                <td>${row.description}</td>
+                <td><span class="status-badge" style="background:var(--bg-light); color:var(--danger);">${row.category}</span></td>
+                <td><span class="status-badge ${row.status === 'Paid' ? 'status-paid' : 'status-pending'}">${row.status}</span></td>
+                <td><strong>${formatCurrency(row.amount)}</strong></td>
+                <td>
+                    <button class="btn-icon" onclick="editExpense('${row.id}', ${row.amount})"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="btn-icon text-danger" onclick="apiDelete('/expenses/delete/${row.id}').then(fetchData)"><span class="material-symbols-outlined">delete</span></button>
                 </td>
             `;
             tableBody.appendChild(tr);
         });
+        
+        if (kpiTotal) kpiTotal.textContent = formatCurrency(total);
+        if (kpiPendingBills) kpiPendingBills.textContent = formatCurrency(pending);
+        if (kpiPendingCount) kpiPendingCount.textContent = pendingCount;
     }
     
     // Update KPI Cards
