@@ -158,24 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         // Handle Logo Upload
-        document.getElementById('logoUpload').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                const base64 = event.target.result;
-                document.getElementById('logoPreview').src = base64;
-                try {
-                    const res = await apiCall('/settings/upload-logo', 'POST', { imageBase64: base64 });
-                    showToast('Logo updated successfully!', 'success');
-                    if (typeof loadGlobalSettings === 'function') await loadGlobalSettings();
-                } catch (err) {
-                    showToast('Logo upload failed: ' + err.message, 'error');
-                }
-            };
-            reader.readAsDataURL(file);
-        });
+        document.getElementById('logoUpload').addEventListener('change', window.handleLogoUpload);
 
         document.getElementById('cp-save').addEventListener('click', () => {
             updateSettings('church_profile', {
@@ -395,18 +378,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = window.appSettings.settings.pdf_branding || {};
         container.innerHTML = `
             <div class="settings-section fade-in">
-                <h3>PDF Branding</h3>
+                <h3>PDF Branding & Reporting</h3>
+                <p style="color:var(--text-secondary); margin-bottom: 1.5rem;">Configure how your church brand appears on official documents.</p>
+                
                 <div class="grid-2">
                     <div class="form-group"><label>Brand Primary Color</label><input type="color" id="pdf-color" class="form-control" value="${data.primaryColor || '#4f46e5'}" style="height:45px;padding:2px;"></div>
-                    <div class="form-group"><label>Footer Custom Text</label><input type="text" id="pdf-footer" class="form-control" value="${data.footerText || ''}"></div>
+                    <div class="form-group"><label>Report Footer Text</label><input type="text" id="pdf-footer" class="form-control" value="${data.footerText || ''}" placeholder="e.g. Committed to Faith"></div>
                 </div>
-                <button class="btn-primary" id="pdf-save">Save Branding</button>
+
+                <div class="form-group">
+                    <label>MANDATE OF THE CHURCH</label>
+                    <textarea id="pdf-mandate" class="form-control" rows="3" placeholder="Enter the core mandate...">${data.mandate || ''}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>VISION OF THE CHURCH</label>
+                    <textarea id="pdf-vision" class="form-control" rows="3" placeholder="Enter the church vision...">${data.vision || ''}</textarea>
+                </div>
+
+                <button class="btn-primary" id="pdf-save">Save Branding Preferences</button>
             </div>
         `;
         document.getElementById('pdf-save').addEventListener('click', () => {
             updateSettings('pdf_branding', {
                 primaryColor: document.getElementById('pdf-color').value,
-                footerText: document.getElementById('pdf-footer').value
+                footerText: document.getElementById('pdf-footer').value,
+                mandate: document.getElementById('pdf-mandate').value,
+                vision: document.getElementById('pdf-vision').value
             });
         });
     }
@@ -416,26 +414,134 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="settings-section fade-in">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
                     <h3>Team Management</h3>
-                    <button class="btn-primary" id="addUserBtn">Invite User</button>
+                    <button class="btn-primary" id="addUserBtn"><span class="material-symbols-outlined">person_add</span> Invite User</button>
                 </div>
                 <div id="usersList">Loading users...</div>
             </div>
         `;
-        apiCall('/settings/users/list').then(users => {
-            const list = document.getElementById('usersList');
-            if(!users.length) { list.innerHTML = 'No other users found.'; return; }
-            list.innerHTML = `
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
-                        <tbody>
-                            ${users.map(u => `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td><button class="btn-icon text-danger" onclick="apiDelete('/settings/users/${u.id}')"><span class="material-symbols-outlined">delete</span></button></td></tr>`).join('')}
-                        </tbody>
-                    </table>
+        
+        const fetchUsers = () => {
+            apiCall('/settings/users/list').then(users => {
+                const list = document.getElementById('usersList');
+                if(!users || !users.length) { list.innerHTML = '<div style="padding:2rem; text-align:center; color:var(--text-secondary);">No other users found.</div>'; return; }
+                list.innerHTML = `
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+                            <tbody>
+                                ${users.map(u => `
+                                    <tr>
+                                        <td><strong>${u.name}</strong></td>
+                                        <td>${u.email}</td>
+                                        <td><span class="status-badge status-paid">${u.role}</span></td>
+                                        <td>
+                                            <button class="btn-icon text-danger" onclick="apiDelete('/settings/users/${u.id}')"><span class="material-symbols-outlined">delete</span></button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }).catch(err => { document.getElementById('usersList').innerHTML = 'Error loading users.'; });
+        };
+        fetchUsers();
+
+        document.getElementById('addUserBtn').addEventListener('click', () => {
+            const modalBody = document.getElementById('settingsModalBody');
+            document.getElementById('settingsModalTitle').textContent = 'Invite Team Member';
+            modalBody.innerHTML = `
+                <div class="form-group"><label>Full Name</label><input type="text" id="u-name" class="form-control" required></div>
+                <div class="form-group"><label>Email Address</label><input type="email" id="u-email" class="form-control" required></div>
+                <div class="form-group"><label>Password</label><input type="password" id="u-pass" class="form-control" required placeholder="Initial password"></div>
+                <div class="form-group">
+                    <label>Assigned Role</label>
+                    <select id="u-role" class="form-control">
+                        <option value="user">User (View Only)</option>
+                        <option value="admin">Admin (Manage Data)</option>
+                        <option value="owner">Owner (Full Control)</option>
+                    </select>
                 </div>
             `;
-        }).catch(err => { document.getElementById('usersList').innerHTML = 'Error loading users.'; });
+            const modal = document.getElementById('settingsModal');
+            modal.classList.add('active');
+            
+            const form = document.getElementById('settingsModalForm');
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const payload = {
+                    name: document.getElementById('u-name').value,
+                    email: document.getElementById('u-email').value,
+                    password: document.getElementById('u-pass').value,
+                    role: document.getElementById('u-role').value
+                };
+                try {
+                    await apiCall('/settings/users/create', 'POST', payload);
+                    showToast('User invited successfully', 'success');
+                    modal.classList.remove('active');
+                    fetchUsers();
+                } catch(err) { showToast(err.message, 'error'); }
+            };
+        });
     }
+
+    // --- HELPER: IMAGE OPTIMIZER ---
+    function optimizeImage(file, maxWidth, maxHeight, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > maxWidth) {
+                            height *= maxWidth / width;
+                            width = maxWidth;
+                        }
+                    } else {
+                        if (height > maxHeight) {
+                            width *= maxHeight / height;
+                            height = maxHeight;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
+    }
+
+    // --- HELPER: Update Logo Upload logic in renderChurchProfile ---
+    // (This part is updated inside the renderChurchProfile function which we'll call next)
+    
+    // Inject the optimizer into the logo upload listener
+    window.handleLogoUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        try {
+            showToast('Optimizing logo...', 'info');
+            const optimizedBase64 = await optimizeImage(file, 400, 400, 0.7);
+            document.getElementById('logoPreview').src = optimizedBase64;
+            
+            await apiCall('/settings/upload-logo', 'POST', { imageBase64: optimizedBase64 });
+            showToast('Logo updated and optimized!', 'success');
+            if (typeof loadGlobalSettings === 'function') await loadGlobalSettings();
+        } catch (err) {
+            showToast('Logo optimization failed: ' + err.message, 'error');
+        }
+    };
 
     function renderNotifications() {
         const data = window.appSettings.settings.notifications || {};
