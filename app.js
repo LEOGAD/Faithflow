@@ -81,20 +81,22 @@ async function apiCall(endpoint, method = 'GET', body = null) {
 
 // Global API Delete Wrapper
 async function apiDelete(endpoint) {
+    if (!confirm('Are you sure you want to permanently delete this item?')) return;
+    
     try {
+        console.log('API Delete Request:', endpoint);
         await apiCall(endpoint, 'DELETE');
+        showToast('Item deleted successfully', 'success');
+        
+        // Refresh the global settings to update the UI
         if (typeof loadGlobalSettings === 'function') {
             await loadGlobalSettings();
         } else {
             window.location.reload();
         }
     } catch (e) {
-        console.error('Delete failed:', e);
-        if (typeof showToast === 'function') {
-            showToast('Delete failed: ' + e.message, 'error');
-        } else {
-            alert('Delete failed: ' + e.message);
-        }
+        console.error('Delete operation failed:', e);
+        showToast('Delete failed: ' + e.message, 'error');
     }
 }
 
