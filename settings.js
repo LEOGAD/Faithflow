@@ -44,21 +44,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderActiveTab() {
         if (!window.appSettings) return;
-        container.innerHTML = '';
         
-        switch(currentTab) {
-            case 'church-profile': return renderChurchProfile();
-            case 'services': return renderServices();
-            case 'income-categories': return renderIncomeCategories();
-            case 'expense-categories': return renderExpenseCategories();
-            case 'attendance': return renderAttendance();
-            case 'reports': return renderReports();
-            case 'pdf-branding': return renderPDFBranding();
-            case 'users': return renderUsers();
-            case 'notifications': return renderNotifications();
-            case 'financial': return renderFinancial();
-            case 'system': return renderSystem();
-            case 'backup': return renderBackup();
+        try {
+            container.innerHTML = '';
+            
+            switch(currentTab) {
+                case 'church-profile': renderChurchProfile(); break;
+                case 'services': renderServices(); break;
+                case 'income-categories': renderIncomeCategories(); break;
+                case 'expense-categories': renderExpenseCategories(); break;
+                case 'attendance': renderAttendance(); break;
+                case 'reports': renderReports(); break;
+                case 'pdf-branding': renderPDFBranding(); break;
+                case 'users': renderUsers(); break;
+                case 'notifications': renderNotifications(); break;
+                case 'financial': renderFinancial(); break;
+                case 'system': renderSystem(); break;
+                case 'backup': renderBackup(); break;
+            }
+        } catch (err) {
+            console.error('Rendering Error:', err);
+            container.innerHTML = `
+                <div class="settings-section fade-in" style="text-align:center; padding: 3rem;">
+                    <span class="material-symbols-outlined" style="font-size:3rem; color:var(--danger); margin-bottom:1rem;">error</span>
+                    <h3>Rendering Failed</h3>
+                    <p style="color:var(--text-secondary);">${err.message}</p>
+                    <button class="btn-primary" style="margin-top:1rem;" onclick="location.reload()">Reload Page</button>
+                </div>
+            `;
         }
     }
     
