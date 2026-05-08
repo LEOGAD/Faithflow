@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Listen for settings load
     window.addEventListener('settingsUpdated', (e) => {
+        console.log('Settings Update Event Received:', e.detail);
         window.appSettings = e.detail;
         renderActiveTab();
     });
@@ -22,9 +23,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Initial Render
+    // Initial Render with better error handling
     if(window.appSettings) {
+        console.log('Settings found, rendering...', window.appSettings);
         renderActiveTab();
+    } else {
+        console.warn('No appSettings found on startup. Waiting for loadGlobalSettings...');
+        container.innerHTML = `
+            <div class="settings-section fade-in" style="text-align:center; padding: 3rem;">
+                <div class="loader-spinner" style="margin: 0 auto 1rem auto;"></div>
+                <h3>Connecting to Server...</h3>
+                <p style="color:var(--text-secondary);">If this takes too long, please check your database connection.</p>
+            </div>
+        `;
     }
     
     async function updateSettings(section, payload) {
