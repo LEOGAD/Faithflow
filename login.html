@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaithFlow - Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-primary);
+        }
+        .auth-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        .auth-card {
+            background: var(--bg-secondary);
+            border-radius: 1.5rem;
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .auth-logo span {
+            color: var(--primary);
+        }
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        .auth-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        .error-message {
+            color: var(--danger);
+            font-size: 0.875rem;
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">Faith<span>Flow</span></div>
+                <p class="auth-subtitle">Sign in to your dashboard</p>
+            </div>
+            
+            <p id="errorMessage" class="error-message"></p>
+
+            <form id="loginForm">
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-control" required placeholder="admin@church.com" />
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <label class="form-label" style="margin-bottom: 0;">Password</label>
+                        <a href="forgot-password.html" style="font-size: 0.875rem; color: var(--primary); text-decoration: none;">Forgot?</a>
+                    </div>
+                    <input type="password" id="password" class="form-control" style="margin-top: 0.5rem;" required placeholder="••••••••" />
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.875rem;">
+                    Sign In
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                Don't have an account? <a href="register.html">Create one</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
