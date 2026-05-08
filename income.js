@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('settingsUpdated', () => {
         console.log('Income Module: Syncing with new settings...');
         populateDropdowns();
+        renderTable(); // Refresh currency symbols
     });
     
     // Dropdowns
