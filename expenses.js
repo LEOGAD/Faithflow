@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const kpiPendingBills = document.getElementById('kpiPendingBills');
     const kpiPendingCount = document.getElementById('kpiPendingCount');
     
+    // Sync with settings
+    window.addEventListener('settingsUpdated', () => {
+        console.log('Expenses Module: Syncing with new settings...');
+        populateDropdowns();
+        renderTable(); // Refresh currency symbols
+    });
+    
     // Dropdowns
     const expCategorySelect = document.getElementById('expCategory');
     
