@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | FaithFlow Admin</title>
+    <!-- Use our premium Vanilla CSS instead of Tailwind -->
+    <link href="styles.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-brand">FaithFlow</h1>
+                <p class="sidebar-subtitle">Stewardship Portal</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item active">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Dashboard
+                </a>
+                <a href="income.html" class="nav-item">
+                    <span class="material-symbols-outlined">payments</span>
+                    Income
+                </a>
+                <a href="expenses.html" class="nav-item">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    Expenses
+                </a>
+                <a href="attendance.html" class="nav-item">
+                    <span class="material-symbols-outlined">groups</span>
+                    Attendance
+                </a>
+                <a href="records.html" class="nav-item">
+                    <span class="material-symbols-outlined">folder_shared</span>
+                    Records
+                </a>
+                <a href="reports.html" class="nav-item">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    Reports
+                </a>
+                <a href="settings.html" class="nav-item">
+                    <span class="material-symbols-outlined">settings</span>
+                    Settings
+                </a>
+                <a href="#" onclick="logout(); return false;" class="nav-item" style="color: var(--danger); margin-top: auto; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                    <span class="material-symbols-outlined">logout</span>
+                    Logout
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCpGFh9E8kjZE9RAXbWrQOOxOdqgrOMRCLktARVXBnT9Ya_shGmirJxW7jGiuOd8y1TLbp2q3o6-b9tf_y8l8VMfBhjwAuU5jZIHhb8FRh7JPoqH8n4uF7P8SNqOPsK5WatItFklazf_LQqv3cgEjd6YjGFYijbO0-_IjddlgyBOOrS01WH6LDUrayd_kKK_E-yq9p3TTQXrjlP_FrpdnY1_yGo5pbR6bEhHAOcyH9uVUG8UbCNNGMKeoj2orSR1BYkriedWGCq1dKU" alt="Admin User" class="user-avatar" />
+                <div class="user-info">
+                    <span class="user-name">Pastor John</span>
+                    <span class="user-role">Lead Admin</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button class="btn-icon menu-toggle" id="menuToggle">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h2 class="header-title">Grace Community Church</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">notifications</span>
+                    </button>
+                    <button class="btn-icon">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                    </button>
+                    <div style="width: 1px; height: 24px; background: var(--border-color); margin: 0 8px;"></div>
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcOegU6HNBVnxs-0YYRsOxW2TntzMD0HSGmYreD7QbSauqejuhsZu-YFA0B1n-iYtpbFBU_z9ZgXvEiPpDJ8OkbvrqDlj5mGfR6CjrU2QjBYbhrFkCjEBsMb9lQFLG_5Qekm6LN3RF-Wuhm3L98IwBJ3poesR_AnEJaXDEZKkh4_Xem5PbIqVeSy-hR-XUSE-wL_Ab45iTcdVC8azK-XF49AKwW1h_8rnoMM9OQgJfm_meylVkmyCvL8GlX0nZgz9HOyF63Gzaxffy" alt="Church Logo" style="width: 32px; height: 32px; border-radius: 8px;" />
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="page-container">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">Dashboard Overview</h1>
+                        <p class="page-description">Welcome back. Here is the latest summary of your church stewardship.</p>
+                    </div>
+                    <button class="btn-secondary">
+                        <span class="material-symbols-outlined">download</span>
+                        Export Data
+                    </button>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-4" style="margin-bottom: var(--spacing-xl);">
+                    <div class="card stagger-1">
+                        <div class="stat-header">
+                            <div class="stat-icon primary">
+                                <span class="material-symbols-outlined">account_balance_wallet</span>
+                            </div>
+                            <span class="stat-badge positive">
+                                <span class="material-symbols-outlined" style="font-size: 14px;">trending_up</span> 0%
+                            </span>
+                        </div>
+                        <p class="stat-title">Total Income</p>
+                        <p class="stat-value" id="kpiDashIncome">$0.00</p>
+                    </div>
+
+                    <div class="card stagger-2">
+                        <div class="stat-header">
+                            <div class="stat-icon danger">
+                                <span class="material-symbols-outlined">payments</span>
+                            </div>
+                            <span class="stat-badge negative">
+                                <span class="material-symbols-outlined" style="font-size: 14px;">trending_down</span> 0%
+                            </span>
+                        </div>
+                        <p class="stat-title">Total Expenses</p>
+                        <p class="stat-value" id="kpiDashExpenses">$0.00</p>
+                    </div>
+
+                    <div class="card stagger-3">
+                        <div class="stat-header">
+                            <div class="stat-icon warning">
+                                <span class="material-symbols-outlined">savings</span>
+                            </div>
+                            <span class="stat-badge neutral">Monthly Target</span>
+                        </div>
+                        <p class="stat-title">Balance</p>
+                        <p class="stat-value" id="kpiDashBalance">$0.00</p>
+                    </div>
+
+                    <div class="card stagger-4">
+                        <div class="stat-header">
+                            <div class="stat-icon success">
+                                <span class="material-symbols-outlined">groups</span>
+                            </div>
+                            <span class="stat-badge neutral" id="kpiDashAttBadge">0 new</span>
+                        </div>
+                        <p class="stat-title">Avg. Attendance</p>
+                        <p class="stat-value" id="kpiDashAttendance">0</p>
+                    </div>
+                </div>
+
+                <!-- Charts & Activity -->
+                <div class="grid grid-cols-3">
+                    <div class="card grid-cols-2" style="grid-column: span 2;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3>Financial Overview</h3>
+                            <select class="form-control" style="width: auto; padding: 0.25rem 0.5rem;">
+                                <option>Last 6 Months</option>
+                                <option>Last Year</option>
+                            </select>
+                        </div>
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6awY4ZvejzkPZgDZE8dUCpUR0UjmRyC5T3-U_yE8P3r66928bmPBIgGV7Wp6aWfDcNU_BN6Tll0UX5hCNrvMo95PFYN3DYOP665jbm2oeOqZoLcXF9oBt5zDl2ZN_7i7uje-s2v_TtXdoZclg5pRPE9u9rTepFV4ZbUw1rFKukuzp4mVsGyssVP6EhkuHUtACC97bwtqNQreLoRXGG4WQ2otn4UA3sPGKpb-hjgOgnppp4sqFf1AfYt56dnwHmpVc8K1UmHlpYZ6W" alt="Chart" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;" />
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1.5rem;">Fund Allocation</h3>
+                        <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZd26FU6mM-kFQCRJpAeGdtpr-ufyoekQlMOf3etGxurC-2oRJdwN9LEH3CuwhKQkU33oLIn4elmvoGq3UrTzVsGl6ky2AeB19TrO2INPu2qIRnR3YmZf4xy6RLKn5Jpr7mjZTJRSwFoFtXP5ecmQ-34pxXJExUUyaNMYGx6BcNI_1Q3U0EreUgg137Htv7ssonhkaTI2GHwyKa8R6KmUwwKxKlKn2m3DklvyO0uB2oLHyzI704yU5wHtZiwIQxMM7a4exuAWFXpNu" alt="Donut Chart" style="width: 200px; height: 200px; border-radius: 50%;" />
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div id="fundAllocationList">
+                                <!-- Dynamically populated by index.js -->
+                                <p style="text-align: center; color: var(--text-secondary); font-size: 0.875rem;">No data yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <button class="fab">
+        <span class="material-symbols-outlined" style="font-size: 28px;">add</span>
+    </button>
+
+    <script src="app.js"></script>
+    <script src="index.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (menuToggle && sidebar && overlay) {
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                
+                overlay.addEventListener('click', () => {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
