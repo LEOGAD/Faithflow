@@ -9,13 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const kpiAttendance = document.getElementById('kpiDashAttendance');
     const kpiAttBadge = document.getElementById('kpiDashAttBadge');
     
+    // Listen for global settings updates
+    window.addEventListener('settingsUpdated', () => {
+        updateDashboard();
+    });
+
     async function updateDashboard() {
         try {
-            // Fetch monthly report data
+            console.log('Refreshing dashboard...');
             const reportData = await apiCall('/reports/monthly');
             const { financials, attendance } = reportData;
             
-            // Update DOM
+            // Update Financial KPI Cards with Global Formatter
             if (kpiIncome) kpiIncome.textContent = formatCurrency(financials.totalIncome);
             if (kpiExpenses) kpiExpenses.textContent = formatCurrency(financials.totalExpenses);
             if (kpiBalance) kpiBalance.textContent = formatCurrency(financials.balance);
