@@ -227,8 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     trackAttendance: document.getElementById('svc-att').checked
                 };
                 try {
-                    await apiCall('/settings/services', 'POST', payload);
-                    showToast('Service added', 'success');
+                    await apiCall('/settings/services/create', 'POST', payload);
+                    showToast('Service added successfully', 'success');
                     modal.classList.remove('active');
                     if(typeof loadGlobalSettings === 'function') await loadGlobalSettings();
                 } catch(err) { showToast(err.message, 'error'); }
@@ -271,8 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const payload = { name: document.getElementById('cat-name').value, color: document.getElementById('cat-color').value };
                 try {
-                    await apiCall('/settings/income-categories', 'POST', payload);
-                    showToast('Category added', 'success');
+                    await apiCall('/settings/income-categories/create', 'POST', payload);
+                    showToast('Income category added', 'success');
                     modal.classList.remove('active');
                     if(typeof loadGlobalSettings === 'function') await loadGlobalSettings();
                 } catch(err) { showToast(err.message, 'error'); }
@@ -315,8 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
                 const payload = { name: document.getElementById('ec-name').value, color: document.getElementById('ec-color').value };
                 try {
-                    await apiCall('/settings/expense-categories', 'POST', payload);
-                    showToast('Category added', 'success');
+                    await apiCall('/settings/expense-categories/create', 'POST', payload);
+                    showToast('Expense category added', 'success');
                     modal.classList.remove('active');
                     if(typeof loadGlobalSettings === 'function') await loadGlobalSettings();
                 } catch(err) { showToast(err.message, 'error'); }
