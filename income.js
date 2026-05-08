@@ -128,22 +128,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Badge color based on dynamic category
             let badgeClass = 'badge-primary';
-            const catDef = window.appSettings?.income_categories?.find(c => c.name === record.category);
-            let badgeStyle = catDef ? `background:${catDef.color}; color:#fff;` : '';
-            
             tr.innerHTML = `
-                <td>${formatDate(record.date)}</td>
-                <td><strong>${record.name || 'Anonymous'}</strong></td>
-                <td><span class="badge ${!catDef ? badgeClass : ''}" style="${badgeStyle}">${record.category}</span></td>
-                <td>General</td>
-                <td style="text-align: right;">
-                    <strong>${formatCurrency(record.amount)}</strong>
-                    <span class="material-symbols-outlined" onclick="editIncome('${record.id}', '${record.amount}')" style="font-size: 16px; cursor: pointer; color: var(--primary); margin-left: 10px; vertical-align: middle;">edit</span>
-                    <span class="material-symbols-outlined" onclick="deleteIncome('${record.id}')" style="font-size: 16px; cursor: pointer; color: var(--danger); margin-left: 5px; vertical-align: middle;">delete</span>
+                <td>${row.date}</td>
+                <td>${row.name}</td>
+                <td><span class="status-badge" style="background:var(--bg-light); color:var(--primary);">${row.category}</span></td>
+                <td><strong>${formatCurrency(row.amount)}</strong></td>
+                <td>
+                    <button class="btn-icon" onclick="editIncome('${row.id}', ${row.amount})"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="btn-icon text-danger" onclick="deleteIncome('${row.id}')"><span class="material-symbols-outlined">delete</span></button>
                 </td>
             `;
             tableBody.appendChild(tr);
         });
+        
+        if (kpiTotal) kpiTotal.textContent = formatCurrency(total);
+        if (kpiAvg) kpiAvg.textContent = formatCurrency(incomeData.length > 0 ? total / incomeData.length : 0);
     }
     
     // Update KPI Cards
