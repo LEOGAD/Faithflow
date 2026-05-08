@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showError(data.error);
                 }
             } catch (err) {
-                showError('Server connection failed.');
+                showError('Server connection failed. Check /auth/ping for status.');
             }
         });
     }
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showError(data.error);
                 }
             } catch (err) {
-                showError('Server connection failed.');
+                showError('Server connection failed. Check /auth/ping for status.');
             }
         });
     }
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showError(data.error);
                 }
             } catch (err) {
-                showError('Server connection failed.');
+                showError('Server connection failed. Check /auth/ping for status.');
             }
         });
     }
