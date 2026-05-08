@@ -3,7 +3,7 @@
   "rewrites": [
     {
       "source": "/(auth|income|expenses|attendance|reports|members|settings|public|backup|export)(.*)",
-      "destination": "/backend/server.js"
+      "destination": "/api/index.js"
     }
   ]
 }
