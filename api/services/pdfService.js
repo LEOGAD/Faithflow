@@ -387,19 +387,17 @@ exports.generateReportPdf = async (reportData, title) => {
         },
         responseType: 'arraybuffer'
       });
-      const filename = `report_${Date.now()}.pdf`;
-      const filePath = path.join(publicDir, filename);
-      fs.writeFileSync(filePath, response.data);
-      return `http://localhost:5000/public/${filename}`;
+      
+      // Return as base64 data URL
+      const base64 = Buffer.from(response.data).toString('base64');
+      return `data:application/pdf;base64,${base64}`;
     } catch (error) {
-      console.warn('PDFShift generation failed. Returning printable HTML file as fallback.');
-      const fallbackPath = path.join(publicDir, 'fallback_report.html');
-      fs.writeFileSync(fallbackPath, htmlContent + '<script>window.onload = () => window.print();</script>');
-      return `http://localhost:5000/public/fallback_report.html`;
+      console.warn('PDFShift generation failed. Returning printable HTML.');
+      const base64Html = Buffer.from(htmlContent + '<script>window.onload = () => window.print();</script>').toString('base64');
+      return `data:text/html;base64,${base64Html}`;
     }
   } else {
-    const fallbackPath = path.join(publicDir, 'fallback_report.html');
-    fs.writeFileSync(fallbackPath, htmlContent + '<script>window.onload = () => window.print();</script>');
-    return `http://localhost:5000/public/fallback_report.html`;
+    const base64Html = Buffer.from(htmlContent + '<script>window.onload = () => window.print();</script>').toString('base64');
+    return `data:text/html;base64,${base64Html}`;
   }
 };
