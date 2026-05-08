@@ -1,44 +1,19 @@
-const http = require('http');
-const fs = require('fs');
+const express = require('express');
 const path = require('path');
+const app = require('./api/index'); // Import the app logic we already built
 
-const PORT = 3001;
+// Render provides a PORT environment variable
+const PORT = process.env.PORT || 10000;
 
-const MIME_TYPES = {
-  '.html': 'text/html',
-  '.css': 'text/css',
-  '.js': 'text/javascript',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.svg': 'image/svg+xml'
-};
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname, '.')));
 
-const server = http.createServer((req, res) => {
-  let filePath = req.url === '/' ? '/index.html' : req.url;
-  filePath = path.join(__dirname, filePath);
-
-  const extname = path.extname(filePath);
-  let contentType = MIME_TYPES[extname] || 'application/octet-stream';
-
-  fs.readFile(filePath, (error, content) => {
-    if (error) {
-      if(error.code == 'ENOENT'){
-        res.writeHead(404);
-        res.end('File Not Found');
-      }
-      else {
-        res.writeHead(500);
-        res.end('Server Error: '+error.code+' ..\n');
-        res.end(); 
-      }
-    }
-    else {
-      res.writeHead(200, { 'Content-Type': contentType });
-      res.end(content, 'utf-8');
-    }
-  });
+// Fallback for root: if not logged in, go to login.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Render Server running on port ${PORT}`);
 });
