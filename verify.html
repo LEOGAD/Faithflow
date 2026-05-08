@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FaithFlow - Verify Email</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg-primary); }
+        .auth-container { width: 100%; max-width: 400px; padding: 2rem; }
+        .auth-card { background: var(--bg-secondary); border-radius: 1.5rem; padding: 2.5rem 2rem; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); }
+        .auth-header { text-align: center; margin-bottom: 2rem; }
+        .auth-logo { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+        .auth-logo span { color: var(--primary); }
+        .auth-subtitle { color: var(--text-secondary); font-size: 0.875rem; }
+        .error-message { color: var(--danger); font-size: 0.875rem; margin-top: -0.5rem; margin-bottom: 1rem; text-align: center; display: none; }
+        .otp-input-group { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem; }
+        .otp-box { width: 3rem; height: 3.5rem; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">Faith<span>Flow</span></div>
+                <p class="auth-subtitle">Verify your account</p>
+                <p style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 0.5rem;">We sent a 6-digit code to your email</p>
+            </div>
+            
+            <p id="errorMessage" class="error-message"></p>
+
+            <form id="verifyForm">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="form-label" style="text-align: center;">Verification Code</label>
+                    <input type="text" id="otp" class="form-control" maxlength="6" required placeholder="000000" style="text-align: center; letter-spacing: 0.5rem; font-size: 1.25rem;" />
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.875rem;">
+                    Verify Account
+                </button>
+            </form>
+            
+            <div style="margin-top: 1.5rem; text-align: center;">
+                <a href="login.html" style="font-size: 0.875rem; color: var(--text-secondary); text-decoration: none;">Back to login</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>
