@@ -154,49 +154,115 @@ function showConfirmModal({ title, message, confirmText, onConfirm, type = 'prim
     modal.onclick = (e) => { if(e.target === modal) closeModal(); };
 }
 
+// GLOBAL CURRENCY FORMATTER
+window.formatCurrency = function(amount) {
+    const currency = (window.appSettings && window.appSettings.settings && window.appSettings.settings.church_profile) 
+        ? window.appSettings.settings.church_profile.currency 
+        : 'USD';
+    
+    const symbols = { 'NGN': '₦', 'USD': '$', 'GBP': '£', 'EUR': '€' };
+    const symbol = symbols[currency] || '$';
+    
+    return symbol + parseFloat(amount || 0).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+};
+
+// Global API Delete Wrapper with Custom Modal
+async function apiDelete(endpoint) {
+    if (!endpoint || endpoint.includes('undefined')) {
+        showToast('Error: Missing item identifier', 'error');
+        return;
+    }
+
+    showConfirmModal({
+        title: 'Delete Confirmation',
+        message: 'Are you sure you want to permanently remove this item? This action cannot be undone.',
+        confirmText: 'Delete Now',
+        type: 'danger',
+        onConfirm: async () => {
+            try {
+                await apiCall(endpoint, 'DELETE');
+                showToast('Successfully deleted', 'success');
+                if (typeof loadGlobalSettings === 'function') {
+                    const data = await loadGlobalSettings();
+                    window.dispatchEvent(new CustomEvent('settingsUpdated', { detail: data }));
+                } else {
+                    window.location.reload();
+                }
+            } catch (e) {
+                showToast('Delete failed: ' + e.message, 'error');
+            }
+        }
+    });
+}
+
 // Load Global Settings from API
 async function loadGlobalSettings() {
     try {
+        console.log('Syncing system settings...');
         const data = await apiCall('/settings');
         window.appSettings = data;
 
-        // Sync legacy db.settings with API data
+        // Apply Global Branding
         if (data.settings && data.settings.church_profile) {
-            db.settings.churchName = data.settings.church_profile.churchName || db.settings.churchName;
-            db.settings.address = data.settings.church_profile.address || db.settings.address;
-            db.settings.currency = data.settings.church_profile.currency || db.settings.currency;
-        }
-        if (data.settings && data.settings.system) {
-            const theme = data.settings.system.theme || 'Light';
-            db.settings.darkMode = (theme === 'Dark');
-        }
-
-        // Apply loaded settings
-        applyTheme();
-
-        // Update church name globally
-        const headerTitles = document.querySelectorAll('.header-title');
-        headerTitles.forEach(el => {
-            el.textContent = db.settings.churchName;
-        });
-
-        // Update Logo globally
-        if (data.settings && data.settings.church_profile && data.settings.church_profile.logoUrl) {
-            const logoEl = document.querySelector('.sidebar-brand-logo');
-            if(logoEl) logoEl.src = data.settings.church_profile.logoUrl;
-            // Also update any header logo if it exists
+            const profile = data.settings.church_profile;
+            
+            // Update Headers
+            document.querySelectorAll('.header-title').forEach(el => el.textContent = profile.churchName);
+            
+            // Update Logos
+            if (profile.logoUrl) {
+                document.querySelectorAll('.sidebar-brand-logo').forEach(el => el.src = profile.logoUrl);
+            }
         }
 
-        // Dispatch Global Event
-        console.log('Settings successfully loaded from API.');
+        // Apply Role-Based Access Control (RBAC)
+        applyPermissions();
+
+        // Dispatch Global Event for modules (Income, Expenses, etc)
         window.dispatchEvent(new CustomEvent('settingsUpdated', { detail: data }));
 
         return data;
     } catch (e) {
-        console.error('CRITICAL: Failed to load settings from API:', e.message);
+        console.error('Settings Sync Failed:', e.message);
         return null;
     }
 }
+
+// ROLE-BASED ACCESS CONTROL (RBAC)
+function applyPermissions() {
+    const user = JSON.parse(localStorage.getItem('faithflow_user') || '{}');
+    const role = user.role || 'user';
+    
+    console.log('Applying permissions for role:', role);
+    
+    const sidebarLinks = document.querySelectorAll('.sidebar-menu a');
+    
+    sidebarLinks.forEach(link => {
+        const text = link.innerText.toLowerCase();
+        let hasAccess = true;
+
+        if (role === 'finance_admin') {
+            if (text.includes('attendance') || text.includes('settings') || text.includes('members')) hasAccess = false;
+        } else if (role === 'attendance_admin') {
+            if (text.includes('income') || text.includes('expense') || text.includes('settings')) hasAccess = false;
+        } else if (role === 'user') {
+            if (!text.includes('dashboard') && !text.includes('reports')) hasAccess = false;
+        }
+        
+        // Hide restricted links
+        if (!hasAccess && role !== 'owner') {
+            link.style.display = 'none';
+        }
+    });
+}
+
+// Auto-Sync on Page Load
+document.addEventListener('DOMContentLoaded', () => {
+    loadGlobalSettings();
+});
 
 // Handle Logout globally
 function logout() {
