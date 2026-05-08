@@ -128,6 +128,17 @@ async function seedDefaultsIfNeeded(churchId) {
   }
 }
 
+// Helper to deep merge objects
+function deepMerge(target, source) {
+  for (const key in source) {
+    if (source[key] instanceof Object && key in target) {
+      Object.assign(source[key], deepMerge(target[key], source[key]));
+    }
+  }
+  Object.assign(target || {}, source);
+  return target;
+}
+
 // GET all settings
 exports.getSettings = async (req, res) => {
   try {
@@ -141,9 +152,22 @@ exports.getSettings = async (req, res) => {
       db.collection(`churches/${churchId}/income_categories`).get(),
       db.collection(`churches/${churchId}/expense_categories`).get()
     ]);
+
+    // Deep merge settings to ensure no missing sub-keys
+    const dbSettings = settingsDoc.exists ? settingsDoc.data() : {};
+    const finalSettings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); // Clone defaults
+    
+    // Merge each section
+    for (const section in dbSettings) {
+      if (finalSettings[section]) {
+        finalSettings[section] = { ...finalSettings[section], ...dbSettings[section] };
+      } else {
+        finalSettings[section] = dbSettings[section];
+      }
+    }
     
     res.json({
-      settings: settingsDoc.exists ? { ...DEFAULT_SETTINGS, ...settingsDoc.data() } : DEFAULT_SETTINGS,
+      settings: finalSettings,
       services: servicesSnap.docs.map(d => ({ id: d.id, ...d.data() })),
       income_categories: icSnap.docs.map(d => ({ id: d.id, ...d.data() })),
       expense_categories: ecSnap.docs.map(d => ({ id: d.id, ...d.data() }))
