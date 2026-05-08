@@ -1,9 +1,14 @@
 {
-  "version": 2,
   "rewrites": [
-    {
-      "source": "/(auth|income|expenses|attendance|reports|members|settings|public|backup|export)(.*)",
-      "destination": "/api/index.js"
-    }
+    { "source": "/auth/(.*)", "destination": "/api/index.js" },
+    { "source": "/settings(.*)", "destination": "/api/index.js" },
+    { "source": "/income(.*)", "destination": "/api/index.js" },
+    { "source": "/expenses(.*)", "destination": "/api/index.js" },
+    { "source": "/attendance(.*)", "destination": "/api/index.js" },
+    { "source": "/reports(.*)", "destination": "/api/index.js" },
+    { "source": "/members(.*)", "destination": "/api/index.js" },
+    { "source": "/public/(.*)", "destination": "/api/index.js" },
+    { "source": "/backup(.*)", "destination": "/api/index.js" },
+    { "source": "/export(.*)", "destination": "/api/index.js" }
   ]
 }
