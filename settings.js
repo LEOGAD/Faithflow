@@ -109,6 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = `
             <div class="settings-section fade-in">
                 <h3>Church Profile</h3>
+                <div class="profile-header-settings" style="display:flex; align-items:center; gap:2rem; margin-bottom:2rem; padding:1.5rem; background:var(--bg-light); border-radius:12px;">
+                    <div class="logo-preview-container" style="position:relative; width:100px; height:100px; border-radius:50%; overflow:hidden; border:2px dashed var(--border-color); background:white; display:flex; align-items:center; justify-content:center;">
+                        <img id="logoPreview" src="${data.logoUrl || 'https://via.placeholder.com/100?text=Logo'}" style="width:100%; height:100%; object-fit:contain;">
+                        <label for="logoUpload" style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:white; font-size:10px; text-align:center; padding:4px; cursor:pointer;">CHANGE</label>
+                        <input type="file" id="logoUpload" hidden accept="image/*">
+                    </div>
+                    <div>
+                        <h4 style="margin-bottom:0.5rem;">Church Brand Logo</h4>
+                        <p style="font-size:0.85rem; color:var(--text-secondary);">This logo will appear on your dashboard, sidebars, and all generated PDF reports. (PNG or JPG, max 2MB)</p>
+                    </div>
+                </div>
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Church Name</label>
@@ -121,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             <option value="USD" ${data.currency === 'USD' ? 'selected' : ''}>US Dollar ($)</option>
                             <option value="GBP" ${data.currency === 'GBP' ? 'selected' : ''}>British Pound (£)</option>
                             <option value="EUR" ${data.currency === 'EUR' ? 'selected' : ''}>Euro (€)</option>
-                            <option value="KES" ${data.currency === 'KES' ? 'selected' : ''}>Kenyan Shilling (KSh)</option>
-                            <option value="ZAR" ${data.currency === 'ZAR' ? 'selected' : ''}>South African Rand (R)</option>
                         </select>
                     </div>
                 </div>
@@ -147,6 +156,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="btn-primary" id="cp-save">Save Profile Settings</button>
             </div>
         `;
+        
+        // Handle Logo Upload
+        document.getElementById('logoUpload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const base64 = event.target.result;
+                document.getElementById('logoPreview').src = base64;
+                try {
+                    const res = await apiCall('/settings/upload-logo', 'POST', { imageBase64: base64 });
+                    showToast('Logo updated successfully!', 'success');
+                    if (typeof loadGlobalSettings === 'function') await loadGlobalSettings();
+                } catch (err) {
+                    showToast('Logo upload failed: ' + err.message, 'error');
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
         document.getElementById('cp-save').addEventListener('click', () => {
             updateSettings('church_profile', {
                 churchName: document.getElementById('cp-name').value,
@@ -154,7 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 tagline: document.getElementById('cp-tagline').value,
                 phone: document.getElementById('cp-phone').value,
                 email: document.getElementById('cp-email').value,
-                address: document.getElementById('cp-address').value
+                address: document.getElementById('cp-address').value,
+                logoUrl: document.getElementById('logoPreview').src
             });
         });
     }
@@ -194,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="form-group"><label>Service Name</label><input type="text" id="svc-name" class="form-control" required placeholder="e.g. Sunday 1st Service"></div>
                 <div class="form-group"><label>Service Type</label><select id="svc-type" class="form-control"><option>Sunday</option><option>Midweek</option><option>Special</option></select></div>
                 <div class="form-group"><label>Display Order</label><input type="number" id="svc-order" class="form-control" value="1"></div>
+                <div class="form-group" style="display:flex; gap:1.5rem; margin-top:1rem;">
+                    <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" id="svc-fin" checked> Track Finance</label>
+                    <label style="display:flex; align-items:center; gap:0.5rem;"><input type="checkbox" id="svc-att" checked> Track Attendance</label>
+                </div>
             `;
             const modal = document.getElementById('settingsModal');
             modal.classList.add('active');
@@ -204,7 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const payload = {
                     name: document.getElementById('svc-name').value,
                     type: document.getElementById('svc-type').value,
-                    order: Number(document.getElementById('svc-order').value)
+                    order: Number(document.getElementById('svc-order').value),
+                    trackFinance: document.getElementById('svc-fin').checked,
+                    trackAttendance: document.getElementById('svc-att').checked
                 };
                 try {
                     await apiCall('/settings/services', 'POST', payload);
