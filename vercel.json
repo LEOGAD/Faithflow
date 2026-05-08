@@ -2,7 +2,7 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/(auth|income|expenses|attendance|reports|members|settings|public)/(.*)",
+      "source": "/(auth|income|expenses|attendance|reports|members|settings|public|backup|export)(.*)",
       "destination": "/backend/server.js"
     }
   ]
