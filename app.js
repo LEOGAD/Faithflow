@@ -44,60 +44,114 @@ function saveSettings() {
     localStorage.setItem('faithflow_settings', JSON.stringify(db.settings));
 }
 
-// API Call Wrapper
+// API Call Wrapper with Robust Error Handling
 async function apiCall(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('faithflow_token');
-    const headers = {
-        'Content-Type': 'application/json'
-    };
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-    }
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
 
-    const config = {
-        method,
-        headers
-    };
+    const config = { method, headers };
     if (body) config.body = JSON.stringify(body);
 
-    // Determine API base URL
-    let API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:5000'
-        : '/api'; // In production (Vercel), use official /api directory path
+        : '/api';
 
-    const response = await fetch(`${API_BASE}${endpoint}`, config);
-    const data = await response.json();
-    
-    if (!response.ok) {
-        if (response.status === 401) {
-            localStorage.removeItem('faithflow_token');
-            localStorage.removeItem('faithflow_user');
-            window.location.href = 'login.html';
+    try {
+        const response = await fetch(`${API_BASE}${endpoint}`, config);
+        
+        // Handle non-JSON responses (Unexpected Token fix)
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error('Server returned non-JSON:', text);
+            throw new Error('Server error: Invalid response format');
         }
-        throw new Error(data.error || 'API Error');
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('faithflow_token');
+                window.location.href = 'login.html';
+            }
+            throw new Error(data.error || 'API Error');
+        }
+        return data;
+    } catch (err) {
+        console.error(`API Call failed [${method} ${endpoint}]:`, err.message);
+        throw err;
     }
-    return data;
 }
 
-// Global API Delete Wrapper
+// Global API Delete Wrapper with Custom Modal
 async function apiDelete(endpoint) {
-    if (!confirm('Are you sure you want to permanently delete this item?')) return;
-    
-    try {
-        console.log('API Delete Request:', endpoint);
-        await apiCall(endpoint, 'DELETE');
-        showToast('Item deleted successfully', 'success');
-        
-        // Refresh the global settings to update the UI
-        if (typeof loadGlobalSettings === 'function') {
-            await loadGlobalSettings();
-        } else {
-            window.location.reload();
+    showConfirmModal({
+        title: 'Delete Confirmation',
+        message: 'Are you sure you want to permanently remove this item? This action cannot be undone.',
+        confirmText: 'Delete Now',
+        type: 'danger',
+        onConfirm: async () => {
+            try {
+                await apiCall(endpoint, 'DELETE');
+                showToast('Successfully deleted', 'success');
+                if (typeof loadGlobalSettings === 'function') await loadGlobalSettings();
+            } catch (e) {
+                showToast('Delete failed: ' + e.message, 'error');
+            }
         }
-    } catch (e) {
-        console.error('Delete operation failed:', e);
-        showToast('Delete failed: ' + e.message, 'error');
+    });
+}
+
+// PREMIUM CONFIRMATION MODAL
+function showConfirmModal({ title, message, confirmText, onConfirm, type = 'primary' }) {
+    let modal = document.getElementById('globalConfirmModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'globalConfirmModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content" style="max-width: 400px; text-align: center; padding: 2.5rem;">
+                <div id="modalIconContainer" style="margin-bottom: 1.5rem;"></div>
+                <h2 id="modalTitle" style="margin-bottom: 0.5rem;">Confirm</h2>
+                <p id="modalMessage" style="color: var(--text-secondary); margin-bottom: 2rem;"></p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <button class="btn-secondary" id="modalCancelBtn">Cancel</button>
+                    <button class="btn-primary" id="modalConfirmBtn"></button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
     }
+
+    const titleEl = modal.querySelector('#modalTitle');
+    const msgEl = modal.querySelector('#modalMessage');
+    const confirmBtn = modal.querySelector('#modalConfirmBtn');
+    const cancelBtn = modal.querySelector('#modalCancelBtn');
+    const iconContainer = modal.querySelector('#modalIconContainer');
+
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+    confirmBtn.textContent = confirmText || 'Confirm';
+    
+    // Icon styling based on type
+    iconContainer.innerHTML = type === 'danger' 
+        ? '<span class="material-symbols-outlined" style="font-size: 4rem; color: var(--danger); border: 4px solid #fee2e2; border-radius: 50%; padding: 1rem;">delete_forever</span>'
+        : '<span class="material-symbols-outlined" style="font-size: 4rem; color: var(--primary); border: 4px solid #e0e7ff; border-radius: 50%; padding: 1rem;">help</span>';
+
+    confirmBtn.className = type === 'danger' ? 'btn-danger' : 'btn-primary';
+
+    modal.classList.add('active');
+
+    const closeModal = () => modal.classList.remove('active');
+
+    confirmBtn.onclick = () => {
+        onConfirm();
+        closeModal();
+    };
+
+    cancelBtn.onclick = closeModal;
+    modal.onclick = (e) => { if(e.target === modal) closeModal(); };
 }
 
 // Load Global Settings from API
