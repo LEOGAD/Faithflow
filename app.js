@@ -61,9 +61,9 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     if (body) config.body = JSON.stringify(body);
 
     // Determine API base URL
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    let API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
         ? 'http://localhost:5000'
-        : ''; // In production (Vercel), use relative path if backend is same-domain
+        : '/api'; // In production (Vercel), use official /api directory path
 
     const response = await fetch(`${API_BASE}${endpoint}`, config);
     const data = await response.json();
