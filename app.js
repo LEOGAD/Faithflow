@@ -131,12 +131,13 @@ async function loadGlobalSettings() {
             // Also update any header logo if it exists
         }
 
-        // Dispatch Global Event so other modules (Income, Expenses, etc.) can re-render
+        // Dispatch Global Event
+        console.log('Settings successfully loaded from API.');
         window.dispatchEvent(new CustomEvent('settingsUpdated', { detail: data }));
 
         return data;
     } catch (e) {
-        console.warn('Could not load settings from API, using local fallback:', e.message);
+        console.error('CRITICAL: Failed to load settings from API:', e.message);
         return null;
     }
 }
