@@ -117,22 +117,20 @@ document.addEventListener('DOMContentLoaded', () => {
         expensesData.forEach(record => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-                <td>${formatDate(row.date)}</td>
-                <td>${row.description}</td>
-                <td><span class="status-badge" style="background:var(--bg-light); color:var(--danger);">${row.category}</span></td>
-                <td><span class="status-badge ${row.status === 'Paid' ? 'status-paid' : 'status-pending'}">${row.status}</span></td>
-                <td><strong>${formatCurrency(row.amount)}</strong></td>
+                <td>${formatDate(record.date)}</td>
+                <td>${record.description}</td>
+                <td><span class="status-badge" style="background:var(--bg-light); color:var(--danger);">${record.category}</span></td>
+                <td><span class="status-badge ${record.status === 'Paid' ? 'status-paid' : 'status-pending'}">${record.status}</span></td>
+                <td><strong>${formatCurrency(record.amount)}</strong></td>
                 <td>
-                    <button class="btn-icon" onclick="editExpense('${row.id}', ${row.amount})"><span class="material-symbols-outlined">edit</span></button>
-                    <button class="btn-icon text-danger" onclick="apiDelete('/expenses/delete/${row.id}').then(fetchData)"><span class="material-symbols-outlined">delete</span></button>
+                    <button class="btn-icon" onclick="editExpense('${record.id}', ${record.amount})"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="btn-icon text-danger" onclick="apiDelete('/expenses/delete/${record.id}').then(fetchData)"><span class="material-symbols-outlined">delete</span></button>
                 </td>
             `;
             tableBody.appendChild(tr);
         });
         
-        if (kpiTotal) kpiTotal.textContent = formatCurrency(total);
-        if (kpiPendingBills) kpiPendingBills.textContent = formatCurrency(pending);
-        if (kpiPendingCount) kpiPendingCount.textContent = pendingCount;
+        updateKPIs();
     }
     
     // Update KPI Cards
