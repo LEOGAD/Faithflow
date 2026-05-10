@@ -130,20 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Badge color based on dynamic category
             let badgeClass = 'badge-primary';
             tr.innerHTML = `
-                <td>${row.date}</td>
-                <td>${row.name}</td>
-                <td><span class="status-badge" style="background:var(--bg-light); color:var(--primary);">${row.category}</span></td>
-                <td><strong>${formatCurrency(row.amount)}</strong></td>
+                <td>${record.date}</td>
+                <td>${record.name}</td>
+                <td><span class="status-badge" style="background:var(--bg-light); color:var(--primary);">${record.category}</span></td>
+                <td><strong>${formatCurrency(record.amount)}</strong></td>
                 <td>
-                    <button class="btn-icon" onclick="editIncome('${row.id}', ${row.amount})"><span class="material-symbols-outlined">edit</span></button>
-                    <button class="btn-icon text-danger" onclick="deleteIncome('${row.id}')"><span class="material-symbols-outlined">delete</span></button>
+                    <button class="btn-icon" onclick="editIncome('${record.id}', ${record.amount})"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="btn-icon text-danger" onclick="deleteIncome('${record.id}')"><span class="material-symbols-outlined">delete</span></button>
                 </td>
             `;
             tableBody.appendChild(tr);
         });
         
-        if (kpiTotal) kpiTotal.textContent = formatCurrency(total);
-        if (kpiAvg) kpiAvg.textContent = formatCurrency(incomeData.length > 0 ? total / incomeData.length : 0);
+        updateKPIs();
     }
     
     // Update KPI Cards
