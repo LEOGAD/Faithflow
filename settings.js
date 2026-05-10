@@ -45,22 +45,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     async function updateSettings(section, payload) {
+        let btn = document.querySelector('.btn-primary');
+        const originalText = btn ? btn.textContent : 'Save';
+        if(btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+        
         try {
-            const btn = document.querySelector('.btn-primary');
-            const originalText = btn ? btn.textContent : 'Save';
-            if(btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
-            
             await apiCall(`/settings/${section}`, 'PUT', payload);
-            showToast('Settings saved successfully', 'success');
+            showToast('Settings saved successfully. Other pages will reflect changes.', 'success');
             
             // Re-load settings to ensure UI is in sync
             if (typeof loadGlobalSettings === 'function') {
                 await loadGlobalSettings();
+            } else {
+                window.dispatchEvent(new CustomEvent('settingsUpdated', { detail: window.appSettings }));
             }
         } catch (e) {
             showToast('Save Failed: ' + e.message, 'error');
-            const btn = document.querySelector('.btn-primary');
-            if(btn) { btn.disabled = false; btn.textContent = 'Try Again'; }
+            btn = document.querySelector('.btn-primary');
+            if(btn) { btn.disabled = false; btn.textContent = originalText; }
         }
     }
 
@@ -128,10 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="form-group">
                         <label>Currency</label>
                         <select id="cp-currency" class="form-control">
-                            <option value="NGN" ${data.currency === 'NGN' ? 'selected' : ''}>Nigerian Naira (₦)</option>
+                            <option value="NGN" ${data.currency === 'NGN' ? 'selected' : ''}>Nigerian Naira (?)</option>
                             <option value="USD" ${data.currency === 'USD' ? 'selected' : ''}>US Dollar ($)</option>
-                            <option value="GBP" ${data.currency === 'GBP' ? 'selected' : ''}>British Pound (£)</option>
-                            <option value="EUR" ${data.currency === 'EUR' ? 'selected' : ''}>Euro (€)</option>
+                            <option value="GBP" ${data.currency === 'GBP' ? 'selected' : ''}>British Pound (�)</option>
+                            <option value="EUR" ${data.currency === 'EUR' ? 'selected' : ''}>Euro (�)</option>
                         </select>
                     </div>
                 </div>
