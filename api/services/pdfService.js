@@ -368,10 +368,7 @@ exports.generateReportPdf = async (reportData, title) => {
     </html>
   `;
 
-  const publicDir = path.join(__dirname, '../public');
-  if (!fs.existsSync(publicDir)){
-      fs.mkdirSync(publicDir, { recursive: true });
-  }
+  // publicDir creation removed for serverless compatibility
 
   if (apiKey) {
     try {
