@@ -18,6 +18,22 @@
         .otp-input-group { display: flex; gap: 0.75rem; justify-content: center; margin-bottom: 1.5rem; }
         .otp-box { width: 3rem; height: 3.5rem; text-align: center; font-size: 1.5rem; font-weight: 700; border-radius: 0.75rem; border: 1px solid var(--border-color); background: var(--bg-primary); color: var(--text-primary); }
     </style>
+
+    <script>
+        try {
+            const cached = localStorage.getItem('faithflow_cached_settings');
+            if (cached) {
+                const data = JSON.parse(cached);
+                if (data && data.settings && data.settings.church_profile) {
+                    const p = data.settings.church_profile;
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.querySelectorAll('.header-title').forEach(el => el.textContent = p.churchName);
+                        if (p.logoUrl) document.querySelectorAll('.sidebar-brand-logo').forEach(el => el.src = p.logoUrl);
+                    });
+                }
+            }
+        } catch(e) {}
+    </script>
 </head>
 <body>
 
