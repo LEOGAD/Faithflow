@@ -130,10 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="form-group">
                         <label>Currency</label>
                         <select id="cp-currency" class="form-control">
-                            <option value="NGN" ${data.currency === 'NGN' ? 'selected' : ''}>Nigerian Naira (?)</option>
+                            <option value="NGN" ${data.currency === 'NGN' ? 'selected' : ''}>Nigerian Naira (₦)</option>
                             <option value="USD" ${data.currency === 'USD' ? 'selected' : ''}>US Dollar ($)</option>
-                            <option value="GBP" ${data.currency === 'GBP' ? 'selected' : ''}>British Pound (�)</option>
-                            <option value="EUR" ${data.currency === 'EUR' ? 'selected' : ''}>Euro (�)</option>
+                            <option value="GBP" ${data.currency === 'GBP' ? 'selected' : ''}>British Pound (£)</option>
+                            <option value="EUR" ${data.currency === 'EUR' ? 'selected' : ''}>Euro (€)</option>
+                            <option value="ZAR" ${data.currency === 'ZAR' ? 'selected' : ''}>South African Rand (R)</option>
+                            <option value="KES" ${data.currency === 'KES' ? 'selected' : ''}>Kenyan Shilling (KSh)</option>
                         </select>
                     </div>
                 </div>
