@@ -7,6 +7,22 @@
     <link href="styles.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <style>.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }</style>
+
+    <script>
+        try {
+            const cached = localStorage.getItem('faithflow_cached_settings');
+            if (cached) {
+                const data = JSON.parse(cached);
+                if (data && data.settings && data.settings.church_profile) {
+                    const p = data.settings.church_profile;
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.querySelectorAll('.header-title').forEach(el => el.textContent = p.churchName);
+                        if (p.logoUrl) document.querySelectorAll('.sidebar-brand-logo').forEach(el => el.src = p.logoUrl);
+                    });
+                }
+            }
+        } catch(e) {}
+    </script>
 </head>
 <body>
     <div class="app-container">
@@ -36,7 +52,7 @@
             <header class="top-header">
                 <div style="display:flex;align-items:center;gap:1rem;">
                     <button class="btn-icon menu-toggle" id="menuToggle"><span class="material-symbols-outlined">menu</span></button>
-                    <h2 class="header-title">Grace Community Church</h2>
+                    <h2 class="header-title"></h2>
                 </div>
             </header>
 
@@ -99,8 +115,8 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
-    <script src="settings.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" src="settings.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const menuToggle = document.getElementById('menuToggle');
