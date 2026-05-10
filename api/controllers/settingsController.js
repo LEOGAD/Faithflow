@@ -207,7 +207,7 @@ exports.listServices = async (req, res) => {
   try {
     const snap = await db.collection(`churches/${getChurchId(req)}/services`).get();
     res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.createService = async (req, res) => {
@@ -216,7 +216,7 @@ exports.createService = async (req, res) => {
     const item = { ...req.body, active: true };
     await docRef.set(item);
     res.status(201).json({ id: docRef.id, ...item });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.updateService = async (req, res) => {
@@ -224,7 +224,7 @@ exports.updateService = async (req, res) => {
     const { id } = req.params;
     await db.collection(`churches/${getChurchId(req)}/services`).doc(id).update(req.body);
     res.json({ message: 'Service updated' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.deleteService = async (req, res) => {
@@ -232,7 +232,7 @@ exports.deleteService = async (req, res) => {
     const { id } = req.params;
     await db.collection(`churches/${getChurchId(req)}/services`).doc(id).delete();
     res.json({ message: 'Service deleted' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 // INCOME CATEGORIES
@@ -240,7 +240,7 @@ exports.listIncomeCategories = async (req, res) => {
   try {
     const snap = await db.collection(`churches/${getChurchId(req)}/income_categories`).get();
     res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.createIncomeCategory = async (req, res) => {
@@ -249,7 +249,7 @@ exports.createIncomeCategory = async (req, res) => {
     const item = { ...req.body, active: true };
     await docRef.set(item);
     res.status(201).json({ id: docRef.id, ...item });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.updateIncomeCategory = async (req, res) => {
@@ -257,7 +257,7 @@ exports.updateIncomeCategory = async (req, res) => {
     const { id } = req.params;
     await db.collection(`churches/${getChurchId(req)}/income_categories`).doc(id).update(req.body);
     res.json({ message: 'Category updated' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.deleteIncomeCategory = async (req, res) => {
@@ -265,7 +265,7 @@ exports.deleteIncomeCategory = async (req, res) => {
     const { id } = req.params;
     await db.collection(`churches/${getChurchId(req)}/income_categories`).doc(id).delete();
     res.json({ message: 'Category deleted' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 // EXPENSE CATEGORIES
@@ -273,7 +273,7 @@ exports.listExpenseCategories = async (req, res) => {
   try {
     const snap = await db.collection(`churches/${getChurchId(req)}/expense_categories`).get();
     res.json(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.createExpenseCategory = async (req, res) => {
@@ -282,7 +282,7 @@ exports.createExpenseCategory = async (req, res) => {
     const item = { ...req.body, active: true };
     await docRef.set(item);
     res.status(201).json({ id: docRef.id, ...item });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.updateExpenseCategory = async (req, res) => {
@@ -290,7 +290,7 @@ exports.updateExpenseCategory = async (req, res) => {
     const { id } = req.params;
     await db.collection(`churches/${getChurchId(req)}/expense_categories`).doc(id).update(req.body);
     res.json({ message: 'Category updated' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.deleteExpenseCategory = async (req, res) => {
@@ -298,7 +298,7 @@ exports.deleteExpenseCategory = async (req, res) => {
     const { id } = req.params;
     await db.collection(`churches/${getChurchId(req)}/expense_categories`).doc(id).delete();
     res.json({ message: 'Category deleted' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 // EXPORT CSV
@@ -375,7 +375,7 @@ exports.updateUserRole = async (req, res) => {
     const { role } = req.body;
     await db.collection('users').doc(id).update({ role });
     res.json({ message: 'Role updated' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 exports.deleteUser = async (req, res) => {
@@ -385,7 +385,7 @@ exports.deleteUser = async (req, res) => {
     if (!doc.exists || doc.data().churchId !== getChurchId(req)) return res.status(403).json({ error: 'Unauthorized' });
     await db.collection('users').doc(id).delete();
     res.json({ message: 'User removed' });
-  } catch (e) { res.status(500).json({ error: 'Failed' }); }
+  } catch (e) { res.status(500).json({ error: e.message || 'Failed' }); }
 };
 
 // LOGO UPLOAD
