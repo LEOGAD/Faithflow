@@ -30,6 +30,14 @@ let db = {
 
 // Global app settings loaded from API
 window.appSettings = null;
+try {
+    const cached = localStorage.getItem('faithflow_cached_settings');
+    if (cached) {
+        window.appSettings = JSON.parse(cached);
+    }
+} catch (e) {
+    console.error('Failed to parse cached settings');
+}
 
 // Load Settings from LocalStorage (legacy fallback)
 function loadSettings() {
@@ -190,6 +198,9 @@ async function loadGlobalSettings() {
         console.log('Syncing system settings...');
         const data = await apiCall('/settings');
         window.appSettings = data;
+        
+        // Cache for next load to prevent flash
+        localStorage.setItem('faithflow_cached_settings', JSON.stringify(data));
 
         // Apply Global Branding
         if (data && data.settings && data.settings.church_profile) {
@@ -398,10 +409,20 @@ async function initApp() {
     loadSettings();
     applyTheme();
     
-    // Update Church Name globally if present in headers
-    const headerTitle = document.querySelector('.header-title');
-    if (headerTitle) {
-        headerTitle.textContent = db.settings.churchName;
+    // Apply cached settings IMMEDIATELY to prevent UI flash
+    if (window.appSettings && window.appSettings.settings && window.appSettings.settings.church_profile) {
+        const profile = window.appSettings.settings.church_profile;
+        document.querySelectorAll('.header-title').forEach(el => {
+            if(profile.churchName) el.textContent = profile.churchName;
+        });
+        if (profile.logoUrl) {
+            document.querySelectorAll('.sidebar-brand-logo').forEach(el => el.src = profile.logoUrl);
+        }
+    } else {
+        const headerTitle = document.querySelector('.header-title');
+        if (headerTitle) {
+            headerTitle.textContent = db.settings.churchName;
+        }
     }
 
     // Load global settings from API
