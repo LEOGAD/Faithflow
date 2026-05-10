@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadBtn.disabled = true;
             try {
                 const payload = {
-                    type: filterTimeframe.value,
+                    timeframe: filterTimeframe.value,
                     periodValue: filterPeriod.value,
                     reportType: filterReportType.value
                 };
