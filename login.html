@@ -67,6 +67,22 @@
             display: none;
         }
     </style>
+
+    <script>
+        try {
+            const cached = localStorage.getItem('faithflow_cached_settings');
+            if (cached) {
+                const data = JSON.parse(cached);
+                if (data && data.settings && data.settings.church_profile) {
+                    const p = data.settings.church_profile;
+                    document.addEventListener('DOMContentLoaded', () => {
+                        document.querySelectorAll('.header-title').forEach(el => el.textContent = p.churchName);
+                        if (p.logoUrl) document.querySelectorAll('.sidebar-brand-logo').forEach(el => el.src = p.logoUrl);
+                    });
+                }
+            }
+        } catch(e) {}
+    </script>
 </head>
 <body>
 
