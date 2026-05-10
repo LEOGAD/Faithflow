@@ -18,7 +18,7 @@ const DB_KEY = 'faithflow_db';
     }
 })();
 
-// Global db object — settings
+// Global db object � settings
 let db = {
     settings: {
         currency: 'USD',
@@ -155,20 +155,6 @@ function showConfirmModal({ title, message, confirmText, onConfirm, type = 'prim
 }
 
 // GLOBAL CURRENCY FORMATTER
-window.formatCurrency = function(amount) {
-    const currency = (window.appSettings && window.appSettings.settings && window.appSettings.settings.church_profile) 
-        ? window.appSettings.settings.church_profile.currency 
-        : 'USD';
-    
-    const symbols = { 'NGN': '₦', 'USD': '$', 'GBP': '£', 'EUR': '€' };
-    const symbol = symbols[currency] || '$';
-    
-    return symbol + parseFloat(amount || 0).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-};
-
 // Global API Delete Wrapper with Custom Modal
 async function apiDelete(endpoint) {
     if (!endpoint || endpoint.includes('undefined')) {
@@ -206,7 +192,7 @@ async function loadGlobalSettings() {
         window.appSettings = data;
 
         // Apply Global Branding
-        if (data.settings && data.settings.church_profile) {
+        if (data && data.settings && data.settings.church_profile) {
             const profile = data.settings.church_profile;
             
             // Update Headers
@@ -219,7 +205,9 @@ async function loadGlobalSettings() {
         }
 
         // Apply Role-Based Access Control (RBAC)
-        applyPermissions();
+        if (typeof applyPermissions === 'function') {
+            applyPermissions();
+        }
 
         // Dispatch Global Event for modules (Income, Expenses, etc)
         window.dispatchEvent(new CustomEvent('settingsUpdated', { detail: data }));
@@ -317,6 +305,8 @@ function formatCurrency(amount) {
         maximumFractionDigits: precision
     }).format(amount);
 }
+
+window.formatCurrency = formatCurrency;
 
 // ============================================
 // Toast Notification System
