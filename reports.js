@@ -1,6 +1,4 @@
-/**
- * Reports Logic (API Connected)
- */
+import { apiCall, formatCurrency, formatDate } from './app.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const repRev = document.getElementById('repRev');
