@@ -53,7 +53,7 @@ function saveSettings() {
 }
 
 // API Call Wrapper with Robust Error Handling
-async function apiCall(endpoint, method = 'GET', body = null) {
+export async function apiCall(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('faithflow_token');
     const headers = { 'Content-Type': 'application/json' };
     if (token) headers['Authorization'] = `Bearer ${token}`;
@@ -164,7 +164,7 @@ function showConfirmModal({ title, message, confirmText, onConfirm, type = 'prim
 
 // GLOBAL CURRENCY FORMATTER
 // Global API Delete Wrapper with Custom Modal
-async function apiDelete(endpoint) {
+export async function apiDelete(endpoint) {
     if (!endpoint || endpoint.includes('undefined')) {
         showToast('Error: Missing item identifier', 'error');
         return;
@@ -193,7 +193,7 @@ async function apiDelete(endpoint) {
 }
 
 // Load Global Settings from API
-async function loadGlobalSettings() {
+export async function loadGlobalSettings() {
     try {
         console.log('Syncing system settings...');
         const data = await apiCall('/settings');
@@ -271,7 +271,7 @@ function logout() {
 }
 
 // Format Date safely
-function formatDate(dateString) {
+export function formatDate(dateString) {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
 }
@@ -291,7 +291,7 @@ function applyTheme() {
 }
 
 // Format Currency based on Settings
-function formatCurrency(amount) {
+export function formatCurrency(amount) {
     const currency = (window.appSettings && window.appSettings.settings && window.appSettings.settings.church_profile) 
                      ? window.appSettings.settings.church_profile.currency 
                      : db.settings.currency || 'USD';
@@ -317,7 +317,11 @@ function formatCurrency(amount) {
     }).format(amount);
 }
 
+window.apiCall = apiCall;
+window.apiDelete = apiDelete;
+window.formatDate = formatDate;
 window.formatCurrency = formatCurrency;
+window.loadGlobalSettings = loadGlobalSettings;
 
 // ============================================
 // Toast Notification System
